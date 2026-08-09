@@ -1,0 +1,25 @@
+app/uploads/*
+app/static/*
+
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+*.pt
+*.pth
+*.onnx
+*.weights
