@@ -54,6 +54,7 @@ class Settings(BaseSettings):
 
     # --- Upload constraints ---
     max_upload_size_mb: int = 10
+    max_video_upload_size_mb: int =200
     allowed_image_extensions: set[str] = Field(
         default_factory=lambda: {".jpg", ".jpeg", ".png", ".webp"}
     )
@@ -81,7 +82,10 @@ class Settings(BaseSettings):
                 f"max_upload_size_mb must be a positive integer, got {value}"
             )
         return value
-
+    @property
+    def max_video_upload_size_bytes(self) ->int:
+        """Convenience conversion of the MB limit to bytes."""
+        return self.max_video_upload_size_mb * 1024 * 1024
     @property
     def max_upload_size_bytes(self) -> int:
         """Convenience conversion of the MB limit to bytes."""

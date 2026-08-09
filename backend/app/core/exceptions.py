@@ -58,3 +58,15 @@ class InferenceError(AppException):
 class ResourceNotFoundError(AppException):
     def __init__(self, message: str = "The requested resource was not found.") -> None:
         super().__init__(message=message, status_code=404)
+class VideoSourceError(AppException):
+    """Raised when a webcam or video file can not be opened."""
+    def __init__(self, message: str ="Could not access the video source.") -> None:
+        super().__init__(message=message, status_code=500)
+class TrackingNotActiveError(AppException):
+    def __init__(self, message: str="Tracking is not active.") -> None:
+        """Raised when tracking is not active."""
+        super().__init__(message=message, status_code=400)
+class TrackingAlreadyActiveError(AppException):
+    """Raised when tracking is already active."""
+    def __init__(self, message: str="Tracking is already active.") -> None:
+        super().__init__(message=message, status_code=409)

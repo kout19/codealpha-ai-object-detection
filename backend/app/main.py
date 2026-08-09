@@ -10,6 +10,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
+from app.api.v1.routes.tracking import router as tracking_router
+
 from app.api.v1.routes.detection import router as detection_router
 from app.core.config import get_settings
 from app.core.exceptions import AppException
@@ -44,6 +46,7 @@ app.add_middleware(
 app.mount("/static", StaticFiles(directory=str(settings.static_dir)), name="static")
 
 app.include_router(detection_router, prefix=settings.api_v1_prefix)
+app.include_router(tracking_router, prefix=settings.api_v1_prefix)
 
 
 @app.exception_handler(AppException)
