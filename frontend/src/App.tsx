@@ -6,7 +6,11 @@ import { LoadingState } from "@/components/LoadingState";
 import { ErrorMessage } from "@/components/ErrorMessage";
 import { DetectionResults } from "@/components/DetectionResult";
 import { DetectionApiError, detectObjects } from "@/apiAxios/api";
+import { TrackingPanel } from "@/components/tracking/TrackingPanel";
+import { Button } from "@/components/ui/button";
 import type { DetectionResponse } from "@/types/detection";
+
+type AppView = "detect" | "track";
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -15,6 +19,8 @@ function formatFileSize(bytes: number): string {
 }
 
 function App() {
+  const [view, setView] = useState<AppView>("track");
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isDetecting, setIsDetecting] = useState(false);
@@ -42,7 +48,7 @@ function App() {
   }, [previewUrl]);
 
   const handleDetect = useCallback(async () => {
-    if (!selectedFile || isDetecting) return; // prevents duplicate requests
+    if (!selectedFile || isDetecting) return;
 
     setIsDetecting(true);
     setError(null);
@@ -68,38 +74,62 @@ function App() {
       <main className="mx-auto max-w-3xl space-y-6 px-4 py-10">
         <div className="space-y-2 text-center">
           <h2 className="text-2xl font-bold tracking-tight text-slate-900">
-            Detect Objects in Any Image
+            AI Object Detection & Tracking
           </h2>
           <p className="text-sm text-slate-500">
-            Upload a photo and let YOLOv8 identify what's in it.
+            Real-time object detection and tracking powered by YOLO and Deep
+            SORT.
           </p>
         </div>
 
-        {error && <ErrorMessage message={error} />}
+        <div className="flex justify-center gap-2">
+          <Button
+            variant={view === "track" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setView("track")}
+          >
+            Live Tracking
+          </Button>
+          <Button
+            variant={view === "detect" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setView("detect")}
+          >
+            Image Detection
+          </Button>
+        </div>
 
-        {!selectedFile && (
-          <ImageUploader
-            onFileSelected={handleFileSelected}
-            onValidationError={handleValidationError}
-            disabled={isDetecting}
-          />
-        )}
+        {view === "track" && <TrackingPanel />}
 
-        {selectedFile && previewUrl && !result && (
-          <ImagePreview
-            previewUrl={previewUrl}
-            fileName={selectedFile.name}
-            fileSizeLabel={formatFileSize(selectedFile.size)}
-            isDetecting={isDetecting}
-            onDetect={handleDetect}
-            onReset={handleReset}
-          />
-        )}
+        {view === "detect" && (
+          <>
+            {error && <ErrorMessage message={error} />}
 
-        {isDetecting && <LoadingState />}
+            {!selectedFile && (
+              <ImageUploader
+                onFileSelected={handleFileSelected}
+                onValidationError={handleValidationError}
+                disabled={isDetecting}
+              />
+            )}
 
-        {result && !isDetecting && (
-          <DetectionResults result={result} onReset={handleReset} />
+            {selectedFile && previewUrl && !result && (
+              <ImagePreview
+                previewUrl={previewUrl}
+                fileName={selectedFile.name}
+                fileSizeLabel={formatFileSize(selectedFile.size)}
+                isDetecting={isDetecting}
+                onDetect={handleDetect}
+                onReset={handleReset}
+              />
+            )}
+
+            {isDetecting && <LoadingState />}
+
+            {result && !isDetecting && (
+              <DetectionResults result={result} onReset={handleReset} />
+            )}
+          </>
         )}
       </main>
     </div>

@@ -10,6 +10,7 @@ const apiClient = axios.create({
   timeout: 30000,
 });
 
+export { apiClient, API_BASE_URL };
 /**
  * Domain-specific error type for the frontend, mirroring the backend's
  * AppException pattern: a user-safe message plus an optional HTTP status,
